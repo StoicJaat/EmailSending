@@ -130,7 +130,8 @@ public class MailSendingServiceImpl implements MailSendingService {
 		String subject = "Resume sending mail";
 		String templateId = "d-bdd5ab1224f84afb83500da92f487735";
 
-		String sendGridKey = "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";
+		
+//		String sendGridKey = your sengrid key here;
 		String getSupport = "ankushbalharacse@gmail.com";
 
 		ArrayList<Personalization> personalizations = new ArrayList<>();
