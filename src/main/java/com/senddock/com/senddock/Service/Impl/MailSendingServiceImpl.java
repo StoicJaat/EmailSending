@@ -142,8 +142,8 @@ public class MailSendingServiceImpl implements MailSendingService {
 		String templateId = "d-006c5b0071c44cc5b5e8c5164b77d9ba";
 
 		
-		String sendGridKey = "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";
-		String getSupport = "ankushbalharacse@gmail.com";
+		String sendGridKey = "your sendgrid key";
+		String getSupport = "your@gmail.com";
 
 		ArrayList<Personalization> personalizations = new ArrayList<>();
 		for (MailSending r : productCampaigns) {
