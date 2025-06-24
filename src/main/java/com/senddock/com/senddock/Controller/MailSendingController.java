@@ -28,7 +28,7 @@ public class MailSendingController {
 	    public ResponseEntity<List<MailSending>> sendCampaign(
 	            @RequestParam("name") String name,
 	            @RequestParam("file") MultipartFile file,
-	            @RequestParam("pdf") MultipartFile pdfFile) {
+	            @RequestParam(required = false)  MultipartFile pdfFile) {
 	        
 	        MailSendingRequest request = MailSendingRequest.builder()
 	                .name(name)

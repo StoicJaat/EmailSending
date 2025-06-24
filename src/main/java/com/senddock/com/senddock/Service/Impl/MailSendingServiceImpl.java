@@ -17,10 +17,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -40,6 +43,9 @@ import com.senddock.com.senddock.Model.SendGrid.To;
 import com.senddock.com.senddock.Repository.MailSendingRepository;
 import com.senddock.com.senddock.Service.MailSendingService;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
 @Service
 public class MailSendingServiceImpl implements MailSendingService {
 
@@ -48,9 +54,13 @@ public class MailSendingServiceImpl implements MailSendingService {
 
 	@Autowired
 	private MailSendingMapper productCampaignMapper;
-
+	
 	@Autowired
 	private MailSendingRepository repository;
+	
+	@Autowired
+    private JavaMailSender mailSender;
+	
 	@Override
 	public List<MailSending> saveCampaignsAndSendMail(MailSendingRequest productCampaignRequest, String name) {
 	    MultipartFile file = productCampaignRequest.getFile();
@@ -96,6 +106,7 @@ public class MailSendingServiceImpl implements MailSendingService {
 
 	        MultipartFile pdfFile = productCampaignRequest.getPdf();
 	        sendEmailToUsers(savedCampaigns, pdfFile);
+//	        sendJavaEmailToUsers(savedCampaigns, pdfFile);
 
 	        System.out.println("Processed: " + processedRows + " | Skipped: " + skippedRows);
 
@@ -128,10 +139,10 @@ public class MailSendingServiceImpl implements MailSendingService {
 	public List<MailSending> sendEmailToUsers(List<MailSending> productCampaigns, MultipartFile pdfFile) {
 
 		String subject = "Resume sending mail";
-		String templateId = "d-bdd5ab1224f84afb83500da92f487735";
+		String templateId = "d-006c5b0071c44cc5b5e8c5164b77d9ba";
 
 		
-//		String sendGridKey = your sengrid key here;
+		String sendGridKey = "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";
 		String getSupport = "ankushbalharacse@gmail.com";
 
 		ArrayList<Personalization> personalizations = new ArrayList<>();
@@ -225,5 +236,51 @@ public class MailSendingServiceImpl implements MailSendingService {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	 public void sendEmailWithAttachment(String to, String subject, String body, MultipartFile pdfAttachment) {
+	        try {
+	            MimeMessage message = mailSender.createMimeMessage();
+	            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+	            helper.setFrom("ankushbalharacse@gmail.com");
+	            helper.setTo(to);
+	            helper.setSubject(subject);
+	            helper.setText(body, false);
+
+	            // Attach PDF
+	            helper.addAttachment("Resume.pdf", new ByteArrayResource(pdfAttachment.getBytes()));
+
+	            mailSender.send(message);
+
+	        } catch (MessagingException | IOException e) {
+	            throw new RuntimeException("Failed to send email: " + e.getMessage());
+	        }
+	    }
+	 
+	 
+	 private void sendJavaEmailToUsers(List<MailSending> users, MultipartFile pdfFile) {
+		    for (MailSending user : users) {
+		        try {
+		            sendEmailWithAttachment(
+		                user.getEmail(),
+		                "Subject: Job Application",
+		                "Hi,\n\nPlease find the attached resume.\n\nRegards,\nAnkush",
+		                pdfFile
+		            );
+
+		            System.out.println("Mail sent to: " + user.getEmail());
+
+		        } catch (Exception e) {
+		            System.err.println("Failed to send email to " + user.getEmail() + ": " + e.getMessage());
+		        }
+
+		        try {
+		            Thread.sleep(1000); 
+		        } catch (InterruptedException e) {
+		            Thread.currentThread().interrupt();
+		        }
+		    }
+	 }
 	
 }
