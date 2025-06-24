@@ -243,7 +243,7 @@ public class MailSendingServiceImpl implements MailSendingService {
 	            MimeMessage message = mailSender.createMimeMessage();
 	            MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-	            helper.setFrom("ankushbalharacse@gmail.com");
+	            helper.setFrom("ankushbalhara@gmail.com");
 	            helper.setTo(to);
 	            helper.setSubject(subject);
 	            helper.setText(body, false);
