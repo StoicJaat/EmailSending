@@ -11,7 +11,7 @@ Tracks email sending status
 Make sure your email_list.xlsx file looks like this:
 
 Serial	Source	Email
-112	Linkedin	recruitment.agrawalpower@gmail.com	
+112	Linkedin	example@gmail.com	
 
 🛠️ Prerequisites
 Java 
